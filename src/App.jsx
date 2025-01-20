@@ -11,6 +11,7 @@ import Dashboard from './pages/Admin/Dashboard';
 import AllAppointment from './pages/Admin/AllAppointment';
 import AddDoctor from './pages/Admin/AddDoctor';
 import DoctorsList from './pages/Admin/DoctorsList';
+import Payment from './pages/Admin/Payment'
 
 const App = () => {
 
@@ -29,6 +30,7 @@ const App = () => {
           <Route path= '/all-appointment' element={<AllAppointment/>}/>
           <Route path= '/add-doctor' element={<AddDoctor/>}/>
           <Route path= '/doctors-list' element={<DoctorsList/>}/>
+          <Route path= '/payment' element={<Payment/>}/>
         </Routes>
       </div>
     </div>

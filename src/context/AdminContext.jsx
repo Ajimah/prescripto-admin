@@ -15,6 +15,8 @@ const AdminContextProvider = (props) => {
     const [aToken,setAToken] = useState(localStorage.getItem('aToken')?localStorage.getItem('aToken'):'')
     
     const [doctors, setDoctors] = useState([]);
+
+    const [transaction, setTransaction] = useState([]);
     
     const backendUrl = import.meta.env.VITE_BACKEND_URL
 
@@ -59,10 +61,32 @@ const AdminContextProvider = (props) => {
         }
     }
 
+
+    const getAllTransaction = async () => {
+      try {
+        const { data } = await axios.post( backendUrl + "/api/admin/getAllTransactions/",
+          {},
+          {headers : {aToken}}
+        );
+      
+        if (data.success) {
+          setTransaction(data.message);
+          console.log(data.message)
+         
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.log(error.message)
+        toast.error(error.response.data.message);
+      }
+    };
+
+
       
     const value = {
         aToken,setAToken,
-        backendUrl,doctors,getAllDoctors,changeAvailability,
+        backendUrl,doctors,getAllDoctors,changeAvailability,getAllTransaction,transaction
     }
 
 
