@@ -5,18 +5,20 @@ import { toast } from 'react-toastify'
 export const AdminContext = createContext()
 
 const AdminContextProvider = ({ children }) => {
-    const [aToken, setAToken] = useState(localStorage.getItem('aToken') || '')
-    const [doctors, setDoctors] = useState([])
-    const [transaction, setTransaction] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [aToken, setAToken] = useState(localStorage.getItem('aToken') || '');
+    const [doctors, setDoctors] = useState([]);
+    const [transaction, setTransaction] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [appointments,setAppointments] = useState([]);
+    const [dashData, setDashData] = useState(false)
     
     const backendUrl = import.meta.env.VITE_BACKEND_URL
 
-    const handleApiError = (error) => {
-        const errorMessage = error.response?.data?.message || error.message
-        toast.error(errorMessage)
-        console.error('API Error:', error)
-    }
+    // const handleApiError = (error) => {
+    //     const errorMessage = error.response?.data?.message || error.message
+    //     toast.error(errorMessage)
+    //     console.error('API Error:', error)
+    // }
 
     const getAllDoctors = useCallback(async () => {
         setIsLoading(true)
@@ -33,7 +35,7 @@ const AdminContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            handleApiError(error)
+            console.log(error.message)
         } finally {
             setIsLoading(false)
         }
@@ -55,7 +57,7 @@ const AdminContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            handleApiError(error)
+            console.log(error.message)
         } finally {
             setIsLoading(false)
         }
@@ -76,11 +78,64 @@ const AdminContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            handleApiError(error)
+            console.log(error.message)
         } finally {
             setIsLoading(false)
         }
     }, [aToken, backendUrl])
+
+
+    //getting all appointments
+
+
+    const getAllAppointments = async () => {
+        try {
+            const {data} = await axios.get(backendUrl + '/api/admin/appointments', {headers:{aToken}})
+            if (data.success){
+                setAppointments(data.appointments)
+                console.log(data.appointments)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            console.log(error.message)
+        }finally {
+            setIsLoading(false)
+        }
+    }
+
+    const cancelAppointment = async (appointmentId) => {
+        try {
+            const {data} = await axios.post(backendUrl + '/api/admin/cancel-appointment' ,{appointmentId},{headers:{aToken}} )
+
+            if (data.success){
+                toast.success(data.message)
+                getAllAppointments()
+
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(data.message)
+        }
+    }
+
+        const getDashData = async () => {
+            try {
+                const {data} = await axios.get(backendUrl + '/api/admin/dashboard' , {headers:{aToken}})
+
+                if(data.success){
+                    setDashData(data.dashData)
+                    console.log(data.dashData)
+                }else{
+                    toast.error(data.message)
+                }
+            } catch (error) {
+                toast.error(data.message)
+            }
+        }
+
+
 
     const value = {
         aToken,
@@ -91,7 +146,13 @@ const AdminContextProvider = ({ children }) => {
         changeAvailability,
         getAllTransaction,
         transaction,
-        isLoading
+        isLoading,
+        appointments, 
+        setAppointments,
+        getAllAppointments,
+        cancelAppointment,
+        dashData,
+        getDashData
     }
 
     return (
