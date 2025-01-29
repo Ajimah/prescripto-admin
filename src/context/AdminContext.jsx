@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 export const AdminContext = createContext()
 
 const AdminContextProvider = ({ children }) => {
-    const [aToken, setAToken] = useState(localStorage.getItem('aToken') || '');
+    const [aToken, setAToken] = useState(localStorage.getItem('aToken')? localStorage.getItem('aToken'): '');
     const [doctors, setDoctors] = useState([]);
     const [transaction, setTransaction] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -126,7 +126,7 @@ const AdminContextProvider = ({ children }) => {
 
                 if(data.success){
                     setDashData(data.dashData)
-                    console.log(data.dashData)
+                    
                 }else{
                     toast.error(data.message)
                 }
